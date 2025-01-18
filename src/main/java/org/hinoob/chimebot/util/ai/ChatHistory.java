@@ -12,37 +12,19 @@ public class ChatHistory {
 
     public static Map<String, ChatHistory> chatHistories = new HashMap<>();
 
-    private final List<ChatMessage> messages = new ArrayList<>();
+    private final List<OllamaChatMessage> messages = new ArrayList<>();
 
-
-    public class ChatMessage {
-        private OllamaChatMessageRole role;
-        private String message;
-
-        public ChatMessage(OllamaChatMessageRole role, String message) {
-            this.role = role;
-            this.message = message;
-        }
-
-        public OllamaChatMessageRole getRole() {
-            return role;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-    }
-
-    public List<OllamaChatMessage> map() {
-        List<OllamaChatMessage> messages = new ArrayList<>();
-        for (ChatMessage message : this.messages) {
-            messages.add(new OllamaChatMessage(message.getRole(), message.getMessage()));
-        }
+    public List<OllamaChatMessage> getMessages() {
         return messages;
     }
 
     public void addMessage(OllamaChatMessageRole role, String message) {
-        messages.add(new ChatMessage(role, message));
+        OllamaChatMessage chatMessage = new OllamaChatMessage(role, message);
+//        if(images != null) {
+//            chatMessage.setImages(images);
+//        }
+
+        messages.add(chatMessage);
     }
 
 }

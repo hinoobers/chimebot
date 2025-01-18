@@ -1,26 +1,39 @@
 package org.hinoob.chimebot.util.ai;
 
 import io.github.ollama4j.OllamaAPI;
+import io.github.ollama4j.exceptions.OllamaBaseException;
 import io.github.ollama4j.models.chat.OllamaChatMessage;
 import io.github.ollama4j.models.chat.OllamaChatMessageRole;
+import io.github.ollama4j.models.chat.OllamaChatRequest;
 import io.github.ollama4j.models.chat.OllamaChatResult;
 import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class AIUtil {
 
     @SneakyThrows
-    public static String getResponse(ChatHistory history, String prompt) {
-        String host = "http://192.168.1.173:11434"; // Replace with your server URL
-        OllamaAPI ollamaAPI = new OllamaAPI(host);
-        ollamaAPI.setRequestTimeoutSeconds(60);
-        history.addMessage(OllamaChatMessageRole.USER, prompt);
+    public static CompletableFuture<String> getResponse(ChatHistory history, String prompt) {
+        return CompletableFuture.supplyAsync(() -> {
+            String host = "http://192.168.1.173:11434"; // Replace with your server URL
+            OllamaAPI ollamaAPI = new OllamaAPI(host);
+            ollamaAPI.setRequestTimeoutSeconds(222222);
+            history.addMessage(OllamaChatMessageRole.USER, prompt);
 
-        List<OllamaChatMessage> messages = history.map();
-        OllamaChatResult rs = ollamaAPI.chat("qwen2.5:1.5b", messages);
-        history.addMessage(OllamaChatMessageRole.ASSISTANT, rs.getResponse());
-        return rs.getResponse();
+            List<OllamaChatMessage> messages = history.getMessages();
+            OllamaChatResult rs;
+            try {
+                rs = ollamaAPI.chat("llama3.2:3b", messages);
+            } catch (OllamaBaseException | IOException | InterruptedException e) {
+                e.printStackTrace();
+                return "An error occurred while processing your request.";
+            }
+            String response = rs.getResponse();
+            history.addMessage(OllamaChatMessageRole.ASSISTANT, response);
+            return response;
+        });
     }
 
 }
