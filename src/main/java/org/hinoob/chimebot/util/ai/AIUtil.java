@@ -17,7 +17,7 @@ public class AIUtil {
     @SneakyThrows
     public static CompletableFuture<String> getResponse(ChatHistory history, String prompt) {
         return CompletableFuture.supplyAsync(() -> {
-            String host = "http://192.168.1.173:11434"; // Replace with your server URL
+            String host = "http://localhost:11434"; // Replace with your server URL
             OllamaAPI ollamaAPI = new OllamaAPI(host);
             ollamaAPI.setRequestTimeoutSeconds(222222);
             history.addMessage(OllamaChatMessageRole.USER, prompt);
@@ -25,7 +25,7 @@ public class AIUtil {
             List<OllamaChatMessage> messages = history.getMessages();
             OllamaChatResult rs;
             try {
-                rs = ollamaAPI.chat("llama3.2:3b", messages);
+                rs = ollamaAPI.chat("qwqi", messages);
             } catch (OllamaBaseException | IOException | InterruptedException e) {
                 e.printStackTrace();
                 return "An error occurred while processing your request.";
